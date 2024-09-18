@@ -1,8 +1,4 @@
-// This is your Prisma schema file,
-// learn more about it in the docs: https://pris.ly/d/prisma-schema
 
-// Looking for ways to speed up your queries, or scale easily with your serverless or edge functions?
-// Try Prisma Accelerate: https://pris.ly/cli/accelerate-init
 
 generator client {
   provider = "prisma-client-js"
@@ -42,19 +38,6 @@ model Session {
  
   @@map("sessions")
 }
- 
-model User {
-  id            String    @id @default(cuid())
-  name          String?
-  email         String?   @unique
-  emailVerified DateTime? @map("email_verified")
-  image         String?
-  accounts      Account[]
-  sessions      Session[]
- 
-  @@map("users")
-}
- 
 model VerificationToken {
   identifier String
   token      String
@@ -62,4 +45,74 @@ model VerificationToken {
  
   @@unique([identifier, token])
   @@map("verificationtokens")
+}
+
+
+// user model apps model
+ 
+model User {
+  id            String    @id @default(cuid())
+  name          String?
+  email         String?   @unique
+  emailVerified DateTime? @map("email_verified")
+  image         String?
+  plan           Plan @default(FREE)
+  accounts      Account[]
+  sessions      Session[]
+  products Product[]
+ 
+    createAt     DateTime @default(now())
+  updatedAt      DateTime @updatedAt
+
+}
+ enum Plan {
+  FREE 
+  PREMIUM
+ }
+
+model Product {
+ id            String    @id @default(cuid())
+  name          String
+  noteText         String?   
+  informtionText         String?   
+  reviexText         String?   
+  thanksText         String?   
+  backgroundColor         String?   
+
+
+  user User @relation(fields:[userId] , references : [id] , onDelete:Cascade)
+
+  userId String
+  reviews      Review[]
+
+  createAt     DateTime @default(now())
+  updatedAt      DateTime @updatedAt
+}
+
+model Review {
+  id            String    @id @default(cuid())
+  rating          Int
+  text         String?   
+  ip String
+  socialLink      String?
+  socialType      SocialType?
+
+  //Image and name getting from social
+  name String?
+
+  image String?
+  //Audio url
+  audio       String?
+  createAt     DateTime @default(now())
+  updatedAt      DateTime @updatedAt
+
+  product      Product @relation(fields:[productId] , references : [id] , onDelete:Cascade)
+  productId   String
+
+  
+}
+
+enum SocialType {
+  LINKEDIN
+  TWITTER
 }
