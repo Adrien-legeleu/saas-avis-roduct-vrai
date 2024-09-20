@@ -1,4 +1,5 @@
 import { Layout, LayoutTitle } from "@/components/layout";
+import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
 import {
   Table,
@@ -11,6 +12,7 @@ import {
 import { requiredCurrentUser } from "@/src/lib/current-user";
 import { prisma } from "@/src/lib/prisma";
 import { PageParams } from "@/src/types/next";
+import Link from "next/link";
 
 export default async function RoutePage(props: PageParams<{}>) {
   const user = await requiredCurrentUser();
@@ -24,11 +26,13 @@ export default async function RoutePage(props: PageParams<{}>) {
   return (
     <Layout>
       <LayoutTitle>Products</LayoutTitle>
-      <Card>
-        <CardContent className="p-4">
+      <Card className="p-4">
+        {products.length ? (
           <Table>
             <TableHeader>
-              <TableHead>Name</TableHead>
+              <TableRow>
+                <TableHead>Name</TableHead>
+              </TableRow>
             </TableHeader>
             <TableBody>
               {products.map((product) => (
@@ -39,7 +43,14 @@ export default async function RoutePage(props: PageParams<{}>) {
               ))}
             </TableBody>
           </Table>
-        </CardContent>
+        ) : (
+          <Link
+            href="/products/new"
+            className="border-[2px] block transition-colors hover:bg-accent/40 border-dashed border-primary w-full rounded-md  p-8 lg:p-12"
+          >
+            Create product
+          </Link>
+        )}
       </Card>
     </Layout>
   );
